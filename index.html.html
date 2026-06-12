@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ใบบันทึกการนำตัวอย่างสินค้า</title>
+<style>
+/* ============================================================
+   BASE — Mobile-first
+============================================================ */
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sarabun',sans-serif;font-size:15px;background:#f1f3f4;min-height:100vh;padding:.25rem;}
+.fw{max-width:720px;margin:0 auto;padding-bottom:4rem;}
+
+/* header */
+.fh{background:#1a73e8;border-radius:12px 12px 0 0;padding:1rem 1.25rem;border-top:6px solid #4285f4;}
+.fh h1{font-size:17px;font-weight:700;color:#fff;margin-bottom:4px;line-height:1.3;}
+.fh p{font-size:12px;color:rgba(255,255,255,.85);line-height:1.4;}
+.fb{border:1px solid #dadce0;border-top:none;border-radius:0 0 12px 12px;background:#fff;padding-bottom:1rem;}
+
+/* sections */
+.sec{border:1px solid #dadce0;border-radius:8px;margin:.75rem .5rem 0;}
+.st{font-size:14px;font-weight:700;color:#1a73e8;padding:.75rem 1rem .5rem;background:#f8f9fa;border-bottom:2px solid #1a73e8;display:flex;align-items:center;gap:6px;border-radius:7px 7px 0 0;}
+.field{padding:.65rem 1rem;border-bottom:1px solid #e8eaed;}
+.field:last-child{border-bottom:none;}
+.field label{display:block;font-size:13px;color:#5f6368;margin-bottom:6px;}
+.req{color:#d93025;}
+.field input,.field select,.field textarea{width:100%;font-size:15px;padding:8px 0;border:none;border-bottom:1.5px solid #dadce0;background:transparent;color:#202124;outline:none;-webkit-appearance:none;}
+.field input:focus,.field select:focus,.field textarea:focus{border-bottom:2.5px solid #1a73e8;}
+.field textarea{resize:vertical;min-height:56px;}
+.two{display:grid;grid-template-columns:1fr 1fr;}
+.two .field{border-right:1px solid #e8eaed;}
+.two .field:last-child{border-right:none;border-bottom:1px solid #e8eaed;}
+
+/* hospital cards */
+.hosp-list{padding:.5rem .5rem 0;}
+.hosp-card{border:1px solid #dadce0;border-radius:8px;margin-bottom:.75rem;overflow:hidden;}
+.hosp-card-head{background:#f8f9fa;padding:.6rem .75rem;display:flex;align-items:center;gap:6px;border-bottom:1px solid #e8eaed;}
+.hosp-num{font-size:13px;font-weight:700;color:#1a73e8;white-space:nowrap;}
+.hosp-name-preview{font-size:12px;color:#5f6368;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.btn-toggle,.btn-del-hosp{background:none;border:none;cursor:pointer;padding:6px 10px;border-radius:6px;font-size:16px;line-height:1;min-width:36px;min-height:36px;display:flex;align-items:center;justify-content:center;}
+.btn-toggle{color:#5f6368;}
+.btn-del-hosp{color:#d93025;}
+.hosp-body{padding:.6rem .75rem .8rem;}
+.hosp-body.collapsed{display:none;}
+/* stack on mobile */
+.h-two{display:grid;grid-template-columns:1fr;gap:0;}
+@media(min-width:480px){.h-two{grid-template-columns:1fr 1fr;gap:.5rem;}}
+.hfield{margin-bottom:.6rem;}
+.hfield label{font-size:13px;color:#5f6368;display:block;margin-bottom:5px;}
+.hfield input,.hfield select,.hfield textarea{width:100%;font-size:15px;padding:8px 0;border:none;border-bottom:1.5px solid #dadce0;background:transparent;color:#202124;outline:none;-webkit-appearance:none;}
+.hfield input:focus,.hfield select:focus,.hfield textarea:focus{border-bottom:2px solid #1a73e8;}
+.hfield textarea{resize:vertical;min-height:48px;}
+
+/* mini tabs */
+.mini-tab-bar,.brand-mini-bar{display:flex;border-bottom:1.5px solid #dadce0;margin:.5rem 0 0;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.mini-tab,.brand-mini{flex:1;min-width:80px;padding:10px 6px;font-size:13px;font-weight:600;color:#5f6368;background:#f8f9fa;border:none;border-bottom:2.5px solid transparent;cursor:pointer;text-align:center;margin-bottom:-1.5px;white-space:nowrap;}
+.mini-tab.active,.brand-mini.active{color:#1a73e8;background:#fff;border-bottom:2.5px solid #1a73e8;}
+.mini-panel,.brand-mini-panel{display:none;}
+.mini-panel.active,.brand-mini-panel.active{display:block;}
+.type-hdr{font-size:12px;font-weight:700;color:#5f6368;padding:6px .75rem;background:#f8f9fa;border-bottom:1px solid #e8eaed;border-top:1px solid #e8eaed;text-transform:uppercase;letter-spacing:.5px;}
+
+/* product table — card layout on mobile */
+.ptbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.ptbl{width:100%;border-collapse:collapse;font-size:13px;}
+.ptbl th{background:#f1f3f4;color:#5f6368;font-weight:600;padding:8px 8px;border:1px solid #e8eaed;white-space:nowrap;text-align:left;}
+.ptbl td{padding:5px 6px;border:1px solid #e8eaed;vertical-align:middle;}
+.ptbl tr:nth-child(even) td{background:#fafafa;}
+.ptbl input,.ptbl select{width:100%;border:none;background:transparent;font-size:14px;padding:4px 3px;color:#202124;outline:none;-webkit-appearance:none;}
+.ptbl input[type="number"]{text-align:center;font-size:15px;font-weight:600;}
+.ptbl input:focus,.ptbl select:focus{background:#e8f0fe;border-radius:3px;}
+/* make qty column bigger tap target */
+.ptbl td:has(input[type="number"]) input{min-height:36px;}
+.rname{display:flex;align-items:center;gap:4px;font-size:13px;color:#202124;line-height:1.35;}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block;}
+.tag{font-size:10px;padding:2px 5px;border-radius:3px;font-weight:700;}
+.tag-c{background:#e8f0fe;color:#1558b0;}
+.tag-s{background:#fce8e6;color:#c5221f;}
+
+/* result radio — bigger tap targets */
+.hosp-sum{font-size:12px;color:#5f6368;text-align:right;padding:.4rem .25rem 0;border-top:1px solid #e8eaed;margin-top:.5rem;}
+.hosp-sum strong{color:#1a73e8;}
+.result-row{margin-top:.75rem;}
+.result-label{font-size:13px;color:#5f6368;margin-bottom:8px;}
+.radio-mini{display:flex;flex-wrap:wrap;gap:.4rem;}
+.radio-mini label{display:flex;align-items:center;gap:6px;font-size:13px;color:#202124;cursor:pointer;background:#f8f9fa;border:1px solid #dadce0;border-radius:20px;padding:7px 12px;min-height:36px;}
+.radio-mini input{accent-color:#1a73e8;width:16px;height:16px;flex-shrink:0;}
+
+/* summary */
+.summary-sec{margin:.75rem .5rem 0;border:1px solid #1a73e8;border-radius:8px;overflow:hidden;}
+.summary-head{background:#1a73e8;color:#fff;font-size:13px;font-weight:600;padding:.6rem 1rem;display:flex;justify-content:space-between;align-items:center;}
+.summary-body{padding:.5rem 1rem;font-size:13px;color:#5f6368;}
+.summary-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #e8eaed;gap:.5rem;flex-wrap:wrap;}
+.summary-row:last-child{border-bottom:none;padding-top:.5rem;font-weight:600;}
+.badge{background:rgba(255,255,255,.2);color:#fff;font-size:12px;padding:2px 10px;border-radius:20px;font-weight:600;}
+
+/* buttons */
+.btn-add-hosp{display:flex;align-items:center;gap:8px;font-size:14px;color:#1a73e8;background:none;border:1.5px dashed #1a73e8;border-radius:8px;padding:10px 16px;cursor:pointer;margin:.75rem .5rem 0;min-height:44px;}
+.action-row{padding:1rem .5rem .5rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;}
+.btn-submit{background:#1a73e8;color:#fff;border:none;border-radius:8px;padding:13px 28px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;min-height:48px;}
+.btn-submit:disabled{background:#bdc1c6;cursor:not-allowed;}
+.btn-clear{background:transparent;border:none;font-size:14px;color:#5f6368;cursor:pointer;padding:12px 4px;min-height:44px;}
+
+/* toast — bottom of screen, full-ish width on mobile */
+.toast{position:fixed;bottom:1rem;left:1rem;right:1rem;background:#202124;color:#fff;font-size:14px;padding:12px 18px;border-radius:10px;display:none;z-index:9999;text-align:center;}
+@media(min-width:480px){.toast{left:auto;right:1.5rem;max-width:320px;}}
+.toast.show{display:block;animation:fadeIn .2s;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+
+/* modal overlay — replaces confirm() for LINE browser */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;}
+.modal-box{background:#fff;border-radius:14px;padding:1.5rem 1.25rem 1rem;max-width:320px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+.modal-msg{font-size:15px;color:#202124;line-height:1.5;margin-bottom:1.25rem;text-align:center;}
+.modal-btns{display:flex;gap:.6rem;}
+.modal-btn{flex:1;padding:11px 0;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;}
+.modal-btn-cancel{background:#f1f3f4;color:#5f6368;}
+.modal-btn-ok{background:#1a73e8;color:#fff;}
+
+/* spinner */
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top:2px solid #fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* prevent iOS zoom on input focus */
+@media(max-width:768px){
+  input,select,textarea{font-size:16px !important;}
+}
+</style>
+</head>
+<body>
+<div class="fw">
+  <div class="fh">
+    <h1>📋 ใบบันทึกการนำตัวอย่างสินค้า</h1>
+    <p>บันทึกสะสมได้หลายโรงพยาบาล · ส่งรวมครั้งเดียวตอนจบวัน · ข้อมูลบันทึกลง Google Sheets อัตโนมัติ</p>
+  </div>
+  <div class="fb">
+
+    <!-- ข้อมูลเซลล์ -->
+    <div class="sec">
+      <div class="st">👤 ข้อมูลเซลล์ผู้บันทึก</div>
+      <div class="two">
+        <div class="field"><label>ชื่อ-นามสกุล <span class="req">*</span></label>
+          <input type="text" id="sale-name" placeholder="ชื่อ นามสกุล" oninput="updateSummary()"/>
+        </div>
+        <div class="field"><label>ทีม / เขตพื้นที่ <span class="req">*</span></label>
+          <select id="sale-zone" onchange="updateSummary()">
+            <option value="">-- เลือกเขตสุขภาพ --</option>
+            <option>เขตสุขภาพที่ 1 (เหนือตอนบน)</option>
+            <option>เขตสุขภาพที่ 2 (เหนือตอนล่าง)</option>
+            <option>เขตสุขภาพที่ 3 (กลางตอนบน)</option>
+            <option>เขตสุขภาพที่ 4 (กลาง)</option>
+            <option>เขตสุขภาพที่ 5 (กลางตอนล่าง)</option>
+            <option>เขตสุขภาพที่ 6 (ตะวันออก)</option>
+            <option>เขตสุขภาพที่ 7 (อีสานตอนกลาง)</option>
+            <option>เขตสุขภาพที่ 8 (อีสานตอนบน)</option>
+            <option>เขตสุขภาพที่ 9 (อีสานตอนล่าง 1)</option>
+            <option>เขตสุขภาพที่ 10 (อีสานตอนล่าง 2)</option>
+            <option>กรุงเทพฯ</option>
+            <option>เขตสุขภาพที่ 11 (ใต้ตอนบน)</option>
+            <option>เขตสุขภาพที่ 12 (ใต้ตอนล่าง)</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>วันที่นำตัวอย่าง <span class="req">*</span></label>
+        <input type="date" id="sale-date" style="width:100%;max-width:220px;" oninput="updateSummary()" onchange="updateSummary()"/>
+      </div>
+    </div>
+
+    <!-- hospital list -->
+    <div id="hosp-list" class="hosp-list"></div>
+    <button class="btn-add-hosp" onclick="addHospital()">➕ เพิ่มโรงพยาบาล</button>
+
+    <!-- summary -->
+    <div class="summary-sec" id="summary-sec" style="display:none;">
+      <div class="summary-head">
+        📊 สรุปรายการทั้งหมดวันนี้
+        <span id="sum-hosp-count" class="badge">0 โรงพยาบาล</span>
+      </div>
+      <div class="summary-body" id="summary-body"></div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-submit" id="btn-submit" onclick="submitAll()">
+        📤 ส่งรายงานทั้งวัน → Google Sheets
+      </button>
+      <button class="btn-clear" onclick="clearAll()">🗑 ล้างทั้งหมด</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-msg" id="modal-msg"></div>
+    <div class="modal-btns">
+      <button class="modal-btn modal-btn-cancel" id="modal-cancel">ยกเลิก</button>
+      <button class="modal-btn modal-btn-ok" id="modal-ok">ตกลง</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ============================================================
+//  ⚙️  ตั้งค่า — วาง URL ของ Apps Script Web App ที่นี่
+// ============================================================
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZQW7BaQHGKvR1jb8gAmgOtz_7U50WoCwNcYqw5CE1dbwZ-8gBFlWLGPH526hJ7em-/exec";
+//  ^ วาง URL จาก Deploy > Manage deployments ของคุณที่นี่
+
+// ============================================================
+//  ข้อมูลสินค้า
+// ============================================================
+const BLOOD_VAC = [
+  {name:"Gel + Clot Activator",color:"#e53935"},
+  {name:"Clot Activator",color:"#e53935"},
+  {name:"Lithium Heparin",color:"#43a047"},
+  {name:"PT / 3.2% Sodium Citrate",color:"#1e88e5"},
+  {name:"EDTA K2 / K3",color:"#8e24aa"},
+  {name:"Sodium Fluoride",color:"#f4a300"},
+  {name:"ESR / 3.8% Sodium Citrate",color:"#555"},
+];
+const BLOOD_MICRO = [
+  {name:"Micro-Clot Activator",color:"#e53935"},
+  {name:"Micro-Gel + Clot Activator",color:"#e53935"},
+  {name:"Micro-Lithium Heparin",color:"#43a047"},
+  {name:"Micro-EDTA K3",color:"#8e24aa"},
+  {name:"Micro-PT / 3.2% Sodium Citrate",color:"#1e88e5"},
+  {name:"Micro-ESR 3.8% Sodium Citrate",color:"#555"},
+];
+const RT_INFECT = [
+  {n:"Dengue NS1",t:"c"},{n:"Dengue IgG/IgM",t:"c"},{n:"Dengue NS1/IgG/IgM Combo",t:"c"},
+  {n:"Influenza A+B",t:"c"},{n:"RSV Antigen",t:"c"},
+  {n:"Covid-19 Antigen",t:"c"},{n:"Covid-19 Antigen",t:"s"},
+  {n:"Scrub Typhus",t:"c"},{n:"Scrub Typhus",t:"s"},
+];
+const RT_HEP = [
+  {n:"HBc",t:"c"},{n:"HBc",t:"s"},{n:"HBsAb",t:"c"},{n:"HBsAb",t:"s"},
+  {n:"HAV IgM",t:"c"},{n:"HAV IgM",t:"s"},{n:"HCV",t:"c"},{n:"HCV",t:"s"},
+  {n:"TP Ab",t:"c"},{n:"TP Ab",t:"s"},{n:"HIV 4th Gen",t:"c"},{n:"HIV 4th Gen",t:"s"},
+  {n:"HIV 1/2",t:"c"},{n:"HIV 1/2",t:"s"},
+];
+const RT_DRUG = [
+  {n:"Morphine",t:"c"},{n:"Morphine",t:"s"},{n:"Marijuana (THC)",t:"c"},{n:"Marijuana (THC)",t:"s"},
+  {n:"Ketamine",t:"c"},{n:"Ketamine",t:"s"},{n:"Methamphetamine",t:"c"},{n:"Methamphetamine",t:"s"},
+];
+const RT_OTHER = [
+  {n:"FOB 50",t:"c"},{n:"FOB 100",t:"c"},{n:"HCG",t:"c"},{n:"HCG",t:"s"},
+];
+
+// ============================================================
+//  Build HTML helpers
+// ============================================================
+function bloodTH(){return`<thead><tr><th style="min-width:140px;">ชื่อสินค้า</th><th style="min-width:48px;">ขนาด</th><th style="width:52px;text-align:center;">จำนวน</th><th style="width:48px;">หน่วย</th><th style="min-width:58px;">Lot</th></tr></thead>`;}
+function rtTH(){return`<thead><tr><th style="min-width:158px;">ชื่อสินค้า (Acmex)</th><th style="width:52px;text-align:center;">จำนวน</th><th style="width:48px;">หน่วย</th><th style="min-width:58px;">Lot</th></tr></thead>`;}
+
+function makeBloodRows(items){
+  return items.map(it=>`<tr>
+    <td><div class="rname"><span class="dot" style="background:${it.color};"></span>${it.name}</div></td>
+    <td><input type="text" placeholder="mL" data-field="size"/></td>
+    <td><input type="number" placeholder="0" min="0" data-field="qty" oninput="onQtyChange(this)"/></td>
+    <td><select data-field="unit"><option>กล่อง</option><option>หลอด</option><option>แพ็ค</option></select></td>
+    <td><input type="text" placeholder="Lot" data-field="lot"/></td>
+  </tr>`).join('');
+}
+function makeRTRows(items){
+  return items.map(it=>`<tr>
+    <td><div class="rname">${it.n} <span class="tag ${it.t==='c'?'tag-c':'tag-s'}">${it.t==='c'?'cassette':'strip'}</span></div></td>
+    <td><input type="number" placeholder="0" min="0" data-field="qty" oninput="onQtyChange(this)"/></td>
+    <td><select data-field="unit"><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td>
+    <td><input type="text" placeholder="Lot" data-field="lot"/></td>
+  </tr>`).join('');
+}
+
+function makeBrandPanel(hid,brand){
+  const pid=`h${hid}-${brand}`;
+  return`<div class="brand-mini-panel" id="${pid}">
+    <div class="type-hdr">💉 Vacuum Tube</div>
+    <div class="ptbl-wrap"><table class="ptbl" data-cat="Blood" data-brand="${brand}" data-type="Vacuum">${bloodTH()}<tbody>${makeBloodRows(BLOOD_VAC)}</tbody></table></div>
+    <div class="type-hdr" style="margin-top:.3rem;">🧫 NonVac Tube</div>
+    <div class="ptbl-wrap"><table class="ptbl" data-cat="Blood" data-brand="${brand}" data-type="NonVac">${bloodTH()}<tbody>${makeBloodRows(BLOOD_VAC)}</tbody></table></div>
+    <div class="type-hdr" style="margin-top:.3rem;">🔬 Micro Tube</div>
+    <div class="ptbl-wrap"><table class="ptbl" data-cat="Blood" data-brand="${brand}" data-type="Micro">${bloodTH()}<tbody>${makeBloodRows(BLOOD_MICRO)}</tbody></table></div>
+  </div>`;
+}
+
+// ============================================================
+//  Hospital card management
+// ============================================================
+let hospCount=0;
+
+function addHospital(){
+  hospCount++;
+  const hid=hospCount;
+  const card=document.createElement('div');
+  card.className='hosp-card';
+  card.id=`hosp-card-${hid}`;
+  card.innerHTML=`
+    <div class="hosp-card-head">
+      <span class="hosp-num">รพ. ที่ ${hid}</span>
+      <span class="hosp-name-preview" id="hosp-preview-${hid}">— ยังไม่ได้กรอกชื่อ</span>
+      <button class="btn-toggle" onclick="toggleCard(${hid})" id="toggle-btn-${hid}" title="ย่อ/ขยาย">▲</button>
+      <button class="btn-del-hosp" onclick="delHospital(${hid})" title="ลบ">×</button>
+    </div>
+    <div class="hosp-body" id="hosp-body-${hid}">
+      <div class="h-two" style="margin-top:.5rem;">
+        <div class="hfield"><label>ชื่อโรงพยาบาล / คลินิก <span class="req">*</span></label>
+          <input type="text" id="h${hid}-hospname" placeholder="ชื่อ รพ." oninput="previewName(${hid},this)"/>
+        </div>
+        <div class="hfield"><label>ประเภท</label>
+          <select id="h${hid}-hosptype">
+            <option value="">-- เลือก --</option>
+            <option>โรงพยาบาลรัฐ</option><option>โรงพยาบาลเอกชน</option><option>คลินิก</option><option>ร้านยา</option>
+          </select>
+        </div>
+      </div>
+      <div class="h-two">
+        <div class="hfield"><label>แผนก / หน่วยงาน</label><input type="text" id="h${hid}-dept" placeholder="เช่น ห้องยา"/></div>
+        <div class="hfield"><label>ชื่อผู้รับตัวอย่าง <span class="req">*</span></label><input type="text" id="h${hid}-receiver" placeholder="ชื่อ-นามสกุล"/></div>
+      </div>
+      <div class="mini-tab-bar">
+        <button class="mini-tab active" onclick="switchMini(${hid},'blood',this)">🩸 Blood Tube</button>
+        <button class="mini-tab" onclick="switchMini(${hid},'rapid',this)">🧪 Rapid Test</button>
+        <button class="mini-tab" onclick="switchMini(${hid},'needle',this)">💉 BD Needle</button>
+      </div>
+      <div class="mini-panel active" id="h${hid}-mini-blood">
+        <div class="brand-mini-bar">
+          <button class="brand-mini active" onclick="switchBrandMini(${hid},'chaoran',this)">🔵 Chaoran</button>
+          <button class="brand-mini" onclick="switchBrandMini(${hid},'kangjian',this)">🟢 Kangjian</button>
+        </div>
+        ${makeBrandPanel(hid,'chaoran')}
+        ${makeBrandPanel(hid,'kangjian')}
+      </div>
+      <div class="mini-panel" id="h${hid}-mini-rapid">
+        <div class="type-hdr" style="margin-top:.4rem;">🦠 Infectious</div>
+        <div class="ptbl-wrap"><table class="ptbl" data-cat="Rapid" data-type="Infectious">${rtTH()}<tbody>${makeRTRows(RT_INFECT)}</tbody></table></div>
+        <div class="type-hdr" style="margin-top:.3rem;">🔬 Hepatitis/HIV</div>
+        <div class="ptbl-wrap"><table class="ptbl" data-cat="Rapid" data-type="Hepatitis/HIV">${rtTH()}<tbody>${makeRTRows(RT_HEP)}</tbody></table></div>
+        <div class="type-hdr" style="margin-top:.3rem;">💊 Drug</div>
+        <div class="ptbl-wrap"><table class="ptbl" data-cat="Rapid" data-type="Drug">${rtTH()}<tbody>${makeRTRows(RT_DRUG)}</tbody></table></div>
+        <div class="type-hdr" style="margin-top:.3rem;">🩺 Other</div>
+        <div class="ptbl-wrap"><table class="ptbl" data-cat="Rapid" data-type="Other">${rtTH()}<tbody>${makeRTRows(RT_OTHER)}</tbody></table></div>
+      </div>
+      <div class="mini-panel" id="h${hid}-mini-needle">
+        <div class="type-hdr" style="margin-top:.4rem;">🔵 General Needle</div>
+        <div class="ptbl-wrap"><table class="ptbl" data-cat="BD Needle" data-type="General"><thead><tr><th style="min-width:210px;">ชื่อสินค้า (BD)</th><th style="width:54px;text-align:center;">จำนวน</th><th style="width:50px;">หน่วย</th><th style="min-width:60px;">Lot</th></tr></thead><tbody>
+          <tr><td><div class="rname">Precisionglide 21G x 1" <span style="font-size:9px;color:#888;">(P302015)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+        </tbody></table></div>
+        <div class="type-hdr" style="margin-top:.3rem;">🟢 Ultra-Fine / Micro-Fine (Insulin)</div>
+        <div class="ptbl-wrap"><table class="ptbl" data-cat="BD Needle" data-type="Ultra-Fine"><thead><tr><th style="min-width:210px;">ชื่อสินค้า (BD)</th><th style="width:54px;text-align:center;">จำนวน</th><th style="width:50px;">หน่วย</th><th style="min-width:60px;">Lot</th></tr></thead><tbody>
+          <tr><td><div class="rname">Ultra-Fine 31G 6mm 1ml Self-contained <span style="font-size:9px;color:#888;">(P324903)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine 31G 6mm 1ml Blister Packed <span style="font-size:9px;color:#888;">(P326674)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine 31G 6mm 0.5ml Blister Packed <span style="font-size:9px;color:#888;">(P326675)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine 31G 6mm 0.5ml Self-contained <span style="font-size:9px;color:#888;">(P324901)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Micro-Fine 0.25mm (31G) 5mm <span style="font-size:9px;color:#888;">(P320470)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine 30G 8mm 0.5ml Blister Packed <span style="font-size:9px;color:#888;">(P326725)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine 31G 8mm 1ml Self-contained <span style="font-size:9px;color:#888;">(P328820)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine 30G 8mm 1ml Blister Packed <span style="font-size:9px;color:#888;">(P326702)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine 31G 8mm 0.5ml Self-contained <span style="font-size:9px;color:#888;">(P328821)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+        </tbody></table></div>
+        <div class="type-hdr" style="margin-top:.3rem;">🟣 Pen Needle</div>
+        <div class="ptbl-wrap"><table class="ptbl" data-cat="BD Needle" data-type="Pen Needle"><thead><tr><th style="min-width:210px;">ชื่อสินค้า (BD)</th><th style="width:54px;text-align:center;">จำนวน</th><th style="width:50px;">หน่วย</th><th style="min-width:60px;">Lot</th></tr></thead><tbody>
+          <tr><td><div class="rname">Ultra-Fine Pen Needles 31G 8mm <span style="font-size:9px;color:#888;">(P320471)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine Pen Needles 32G 4mm <span style="font-size:9px;color:#888;">(P320566)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+        </tbody></table></div>
+      </div>
+
+      <div class="mini-panel" id="h${hid}-mini-needle">
+        <div class="type-hdr" style="margin-top:.4rem;">🔵 General Needle</div>
+        <div class="ptbl-wrap"><table class="ptbl" data-cat="BD Needle" data-type="General"><thead><tr><th style="min-width:215px;">ชื่อสินค้า (BD)</th><th style="width:54px;text-align:center;">จำนวน</th><th style="width:50px;">หน่วย</th><th style="min-width:60px;">Lot</th></tr></thead><tbody>
+          <tr><td><div class="rname">Precisionglide 21G x 1" <span style="font-size:9px;color:#888;">(P302015)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+        </tbody></table></div>
+        <div class="type-hdr" style="margin-top:.3rem;">🟢 Ultra-Fine / Micro-Fine</div>
+        <div class="ptbl-wrap"><table class="ptbl" data-cat="BD Needle" data-type="Ultra-Fine"><thead><tr><th style="min-width:215px;">ชื่อสินค้า (BD)</th><th style="width:54px;text-align:center;">จำนวน</th><th style="width:50px;">หน่วย</th><th style="min-width:60px;">Lot</th></tr></thead><tbody>
+          <tr><td><div class="rname">Ultra-Fine 31G 6mm 1ml Self-contained <span style="font-size:9px;color:#888;">(P324903)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine 31G 6mm 1ml Blister Packed <span style="font-size:9px;color:#888;">(P326674)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine 31G 6mm 0.5ml Blister Packed <span style="font-size:9px;color:#888;">(P326675)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine 31G 6mm 0.5ml Self-contained <span style="font-size:9px;color:#888;">(P324901)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Micro-Fine 0.25mm (31G) 5mm <span style="font-size:9px;color:#888;">(P320470)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine 30G 8mm 0.5ml Blister Packed <span style="font-size:9px;color:#888;">(P326725)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine 31G 8mm 1ml Self-contained <span style="font-size:9px;color:#888;">(P328820)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine 30G 8mm 1ml Blister Packed <span style="font-size:9px;color:#888;">(P326702)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine 31G 8mm 0.5ml Self-contained <span style="font-size:9px;color:#888;">(P328821)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+        </tbody></table></div>
+        <div class="type-hdr" style="margin-top:.3rem;">🟣 Pen Needle</div>
+        <div class="ptbl-wrap"><table class="ptbl" data-cat="BD Needle" data-type="Pen Needle"><thead><tr><th style="min-width:215px;">ชื่อสินค้า (BD)</th><th style="width:54px;text-align:center;">จำนวน</th><th style="width:50px;">หน่วย</th><th style="min-width:60px;">Lot</th></tr></thead><tbody>
+          <tr><td><div class="rname">Ultra-Fine Pen Needles 31G 8mm <span style="font-size:9px;color:#888;">(P320471)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+          <tr><td><div class="rname">Ultra-Fine Pen Needles 32G 4mm <span style="font-size:9px;color:#888;">(P320566)</span></div></td><td><input type="number" placeholder="0" min="0" oninput="onQtyChange(this)"/></td><td><select><option>กล่อง</option><option>ชิ้น</option><option>แพ็ค</option></select></td><td><input type="text"/></td></tr>
+        </tbody></table></div>
+      </div>
+
+      <div class="hosp-sum" id="hosp-sum-${hid}">รายการที่กรอก: <strong>0</strong> รายการ</div>
+      <div class="result-row">
+        <div class="result-label">ผลการเข้าพบ <span class="req">*</span></div>
+        <div class="radio-mini">
+          <label><input type="radio" name="res-${hid}" value="สนใจ — นัด Follow up"/> สนใจ — นัด Follow up</label>
+          <label><input type="radio" name="res-${hid}" value="รับตัวอย่างไว้ก่อน"/> รับตัวอย่างไว้ก่อน</label>
+          <label><input type="radio" name="res-${hid}" value="ไม่สนใจ"/> ไม่สนใจ</label>
+          <label><input type="radio" name="res-${hid}" value="ขอข้อมูลเพิ่ม"/> ขอข้อมูลเพิ่ม</label>
+          <label><input type="radio" name="res-${hid}" value="เสนอคณะกรรมการ"/> เสนอคณะกรรมการ</label>
+        </div>
+      </div>
+      <div class="hfield" style="margin-top:.5rem;">
+        <label>บันทึกเพิ่มเติม</label>
+        <textarea id="h${hid}-note" placeholder="ข้อตกลง, ข้อสังเกต..."></textarea>
+      </div>
+    </div>`;
+  document.getElementById('hosp-list').appendChild(card);
+  document.getElementById(`h${hid}-chaoran`).classList.add('active');
+  updateSummary();
+  try{card.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}
+}
+
+function toggleCard(hid){
+  const b=document.getElementById(`hosp-body-${hid}`);
+  const btn=document.getElementById(`toggle-btn-${hid}`);
+  b.classList.toggle('collapsed');
+  btn.textContent=b.classList.contains('collapsed')?'▼':'▲';
+}
+async function delHospital(hid){
+  const ok=await mConfirm(`ลบโรงพยาบาลที่ ${hid} ออกใช่ไหม?`);
+  if(!ok)return;
+  document.getElementById(`hosp-card-${hid}`).remove();
+  updateSummary();
+}
+function previewName(hid,inp){
+  document.getElementById(`hosp-preview-${hid}`).textContent=inp.value||'— ยังไม่ได้กรอกชื่อ';
+  updateSummary();
+}
+function switchMini(hid,name,btn){
+  const card=document.getElementById(`hosp-card-${hid}`);
+  card.querySelectorAll('.mini-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  card.querySelectorAll('.mini-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(`h${hid}-mini-${name}`).classList.add('active');
+}
+function switchBrandMini(hid,brand,btn){
+  const card=document.getElementById(`hosp-card-${hid}`);
+  card.querySelectorAll('.brand-mini').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  card.querySelectorAll('.brand-mini-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(`h${hid}-${brand}`).classList.add('active');
+}
+function onQtyChange(inp){
+  const card=inp.closest('.hosp-card');
+  const hid=card.id.replace('hosp-card-','');
+  let c=0;
+  card.querySelectorAll('input[type="number"]').forEach(i=>{if((parseFloat(i.value)||0)>0)c++;});
+  const el=document.getElementById(`hosp-sum-${hid}`);
+  if(el)el.innerHTML=`รายการที่กรอก: <strong>${c}</strong> รายการ`;
+  updateSummary();
+}
+
+// ============================================================
+//  Summary
+// ============================================================
+function updateSummary(){
+  const cards=document.querySelectorAll('.hosp-card');
+  const sec=document.getElementById('summary-sec');
+  if(!cards.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  document.getElementById('sum-hosp-count').textContent=cards.length+' โรงพยาบาล';
+  let html='',gi=0,gq=0;
+  cards.forEach(card=>{
+    const hid=card.id.replace('hosp-card-','');
+    const hname=document.getElementById(`hosp-preview-${hid}`).textContent;
+    let c=0,q=0;
+    card.querySelectorAll('input[type="number"]').forEach(i=>{const v=parseFloat(i.value)||0;if(v>0){c++;q+=v;}});
+    gi+=c;gq+=q;
+    const res=card.querySelector(`input[name="res-${hid}"]:checked`);
+    html+=`<div class="summary-row"><span>รพ.${hid}: <strong>${hname}</strong></span><span>${c} รายการ${res?' · '+res.value:''}</span></div>`;
+  });
+  html+=`<div class="summary-row"><span>รวมทั้งหมด</span><span style="color:#1a73e8;">${gi} รายการ · ${gq} กล่อง/แพ็ค</span></div>`;
+  document.getElementById('summary-body').innerHTML=html;
+}
+
+// ============================================================
+//  Collect payload
+// ============================================================
+function collectPayload(){
+  const saleName =document.getElementById('sale-name').value.trim();
+  const saleZone =document.getElementById('sale-zone').value;
+  const submitDate=document.getElementById('sale-date').value;
+
+  const cards=document.querySelectorAll('.hosp-card');
+  if(!saleName){showToast('❗ กรุณากรอกชื่อเซลล์');return null;}
+  if(!submitDate){showToast('❗ กรุณาเลือกวันที่นำตัวอย่าง');return null;}
+  if(!cards.length){showToast('❗ กรุณาเพิ่มโรงพยาบาลอย่างน้อย 1 แห่ง');return null;}
+
+  const hospitals=[];
+  let valid=true;
+
+  cards.forEach(card=>{
+    const hid=card.id.replace('hosp-card-','');
+    const hospName=(document.getElementById(`h${hid}-hospname`)?.value||'').trim();
+    const hospType=document.getElementById(`h${hid}-hosptype`)?.value||'';
+    const dept    =document.getElementById(`h${hid}-dept`)?.value||'';
+    const receiver=(document.getElementById(`h${hid}-receiver`)?.value||'').trim();
+    const note    =document.getElementById(`h${hid}-note`)?.value||'';
+    const resEl   =card.querySelector(`input[name="res-${hid}"]:checked`);
+    const visitResult=resEl?resEl.value:'';
+
+    if(!hospName){showToast(`❗ กรุณากรอกชื่อโรงพยาบาลที่ ${hid}`);valid=false;return;}
+
+    const items=[];
+    card.querySelectorAll('.ptbl').forEach(tbl=>{
+      const cat  =tbl.dataset.cat  ||'';
+      const brand=tbl.dataset.brand||'';
+      const type =tbl.dataset.type ||'';
+      tbl.querySelectorAll('tbody tr').forEach(row=>{
+        const qtyEl=row.querySelector('[data-field="qty"]');
+        const qty  =parseFloat(qtyEl?.value)||0;
+        if(qty<=0)return;
+        const nameEl=row.querySelector('.rname');
+        const name  =nameEl?nameEl.textContent.trim():'';
+        const unit  =row.querySelector('[data-field="unit"]')?.value||'';
+        const lot   =row.querySelector('[data-field="lot"]')?.value||'';
+        const size  =row.querySelector('[data-field="size"]')?.value||'';
+        items.push({category:cat,brand,type,name,size,qty,unit,lot});
+      });
+    });
+
+    hospitals.push({hospName,hospType,dept,receiver,visitResult,note,items});
+  });
+
+  if(!valid)return null;
+  return{saleName,saleZone,submitDate,hospitals};
+}
+
+// ============================================================
+//  Submit → Apps Script
+// ============================================================
+async function submitAll(){
+  const payload=collectPayload();
+  if(!payload)return;
+
+  const btn=document.getElementById('btn-submit');
+  btn.disabled=true;
+  btn.innerHTML=`<span class="spinner"></span> กำลังส่งข้อมูล...`;
+
+  try{
+    await sendViaForm(JSON.stringify(payload));
+    showToast(`✅ ส่งสำเร็จ! ${payload.hospitals.length} โรงพยาบาล บันทึกลง Google Sheets แล้ว`,4000);
+    setTimeout(async()=>{const ok=await mConfirm('ส่งสำเร็จ! ต้องการล้างฟอร์มเพื่อเริ่มบันทึกวันใหม่ไหม?');if(ok)clearAll();},500);
+  }catch(err){
+    showToast('❌ เกิดข้อผิดพลาด: '+err.message,5000);
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='📤 ส่งรายงานทั้งวัน → Google Sheets';
+  }
+}
+
+// ส่งข้อมูลผ่าน hidden form POST (แก้ปัญหา CORS ของ Apps Script)
+function sendViaForm(jsonData) {
+  return new Promise((resolve, reject) => {
+    // สร้าง iframe ซ่อน
+    const iframe = document.createElement('iframe');
+    iframe.name = 'hidden_iframe_' + Date.now();
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    // สร้าง form ชั่วคราว
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = APPS_SCRIPT_URL;
+    form.target = iframe.name;
+    form.style.display = 'none';
+
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'data';
+    input.value = jsonData;
+    form.appendChild(input);
+
+    document.body.appendChild(form);
+
+    iframe.onload = () => {
+      setTimeout(() => {
+        document.body.removeChild(form);
+        document.body.removeChild(iframe);
+        resolve();
+      }, 500);
+    };
+
+    setTimeout(() => {
+      document.body.removeChild(form);
+      document.body.removeChild(iframe);
+      resolve(); // timeout fallback
+    }, 5000);
+
+    form.submit();
+  });
+}
+
+async function clearAll(){
+  const ok=await mConfirm('ต้องการล้างข้อมูลทั้งหมดใช่ไหม?');
+  if(!ok)return;
+  document.getElementById('hosp-list').innerHTML='';
+  hospCount=0;
+  document.getElementById('sale-name').value='';
+  document.getElementById('sale-date').value='';
+  document.getElementById('sale-zone').selectedIndex=0;
+  updateSummary();
+  addHospital();
+}
+
+function showToast(msg,dur=3000){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+
+// custom confirm — replaces window.confirm() for LINE browser
+function mConfirm(msg){
+  return new Promise(resolve=>{
+    const ov=document.getElementById('modal-overlay');
+    document.getElementById('modal-msg').textContent=msg;
+    ov.style.display='flex';
+    const ok=document.getElementById('modal-ok');
+    const cancel=document.getElementById('modal-cancel');
+    function cleanup(result){
+      ov.style.display='none';
+      ok.removeEventListener('click',onOk);
+      cancel.removeEventListener('click',onCancel);
+      resolve(result);
+    }
+    function onOk(){cleanup(true);}
+    function onCancel(){cleanup(false);}
+    ok.addEventListener('click',onOk);
+    cancel.addEventListener('click',onCancel);
+  });
+}
+
+// init
+function initForm(){
+  try{
+    const d=new Date();
+    const yyyy=d.getFullYear();
+    const mm=String(d.getMonth()+1).padStart(2,'0');
+    const dd=String(d.getDate()).padStart(2,'0');
+    document.getElementById('sale-date').value=`${yyyy}-${mm}-${dd}`;
+  }catch(e){}
+  addHospital();
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',initForm);
+}else{
+  initForm();
+}
+</script>
+</body>
+</html>
